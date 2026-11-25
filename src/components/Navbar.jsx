@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { DEVELOPER_PROFILE } from "../data/portfolioData";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -72,12 +73,14 @@ const Navbar = () => {
           </button>
 
           <a
-            href="https://drive.google.com/drive/folders/1tu6B1A1xDTNzQJm9FC_-INLjuoJ40BFV?usp=sharing"
+            href={DEVELOPER_PROFILE.contact.resumeUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="navbar-resume"
+            title="Open or download CV (PDF)"
           >
             Resume
+            <span style={{ marginLeft: "4px", fontSize: "11px" }}>↗</span>
           </a>
         </nav>
 

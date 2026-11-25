@@ -1,69 +1,6 @@
 import { motion } from "framer-motion";
 import { fadeLeft, fadeRight, fadeUp } from "../animations/fade";
-
-const techGroups = [
-  {
-    number: "01",
-    title: "Backend",
-    description:
-      "Building APIs, business logic, authentication, and backend services.",
-    technologies: [
-      "Rust",
-      "Actix Web",
-      "Golang",
-      "Node.js",
-      "Express.js",
-      "PHP",
-      "Laravel",
-      "REST API",
-    ],
-  },
-  {
-    number: "02",
-    title: "Data & Infrastructure",
-    description:
-      "Working with relational databases, caching, containers, and deployment workflows.",
-    technologies: [
-      "PostgreSQL",
-      "MySQL",
-      "Redis",
-      "SeaORM",
-      "Docker",
-      "Docker Compose",
-      "Neon",
-    ],
-  },
-  {
-    number: "03",
-    title: "Frontend",
-    description:
-      "Building responsive interfaces and connecting applications with backend services.",
-    technologies: [
-      "React.js",
-      "JavaScript",
-      "HTML",
-      "CSS",
-      "Bootstrap",
-      "Tailwind CSS",
-      "Flutter",
-    ],
-  },
-  {
-    number: "04",
-    title: "Tools & Workflow",
-    description:
-      "Supporting development, API testing, documentation, and version control.",
-    technologies: [
-      "Git",
-      "GitHub",
-      "Postman",
-      "Swagger",
-      "OpenAPI",
-      "Linux",
-      "Vercel",
-    ],
-  },
-];
+import { TECH_GROUPS } from "../data/portfolioData";
 
 const TechStack = () => {
   return (
@@ -91,31 +28,30 @@ const TechStack = () => {
           whileInView="show"
           viewport={{ once: true }}
         >
-          My primary focus is backend engineering, supported by experience
-          across databases, infrastructure, frontend development, and
-          engineering workflows.
+          My core expertise centers on backend architecture and secure REST APIs, expanded with modern fullstack web frameworks, scalable databases, and enterprise testing tools.
         </motion.p>
       </div>
 
       <div className="tech-groups">
-        {techGroups.map((group, index) => (
+        {TECH_GROUPS.map((group, index) => (
           <motion.article
-  className="tech-group"
-  key={group.number}
-  variants={fadeUp}
-  initial="hidden"
-  whileInView="show"
-  viewport={{ once: true }}
-  transition={{
-    delay: index * 0.1,
-  }}
-  whileHover={{
-    scale: 1.03,
-    transition: {
-      duration: 0.25,
-    },
-  }}
->
+            className="tech-group"
+            key={group.number}
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true }}
+            transition={{
+              delay: index * 0.1,
+            }}
+            whileHover={{
+              y: -4,
+              borderColor: "#3b82f6",
+              transition: {
+                duration: 0.2,
+              },
+            }}
+          >
             <div className="tech-group-number">{group.number}</div>
 
             <div className="tech-group-info">

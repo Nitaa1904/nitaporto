@@ -1,29 +1,23 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { fadeLeft, fadeRight, fadeUp } from "../animations/fade";
-import SkeletonCard from "./SkeletonCard";
+import { DEFAULT_EXPERIENCES } from "../data/portfolioData";
 
 const Experience = () => {
-  const [experiences, setExperiences] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [experiences, setExperiences] = useState(DEFAULT_EXPERIENCES);
 
   useEffect(() => {
     const fetchExperiences = async () => {
       try {
         const response = await fetch("/api/experiences");
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch experiences");
+        if (response.ok) {
+          const data = await response.json();
+          if (Array.isArray(data) && data.length > 0) {
+            setExperiences(data);
+          }
         }
-
-        const data = await response.json();
-        setExperiences(data);
       } catch (err) {
-        console.error("Error fetching experiences:", err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
+        console.info("Using embedded experience records:", err.message);
       }
     };
 
@@ -41,7 +35,7 @@ const Experience = () => {
       return start_date;
     }
 
-    return `${start_date} — ${end_date}`;
+    return `${start_date} – ${end_date}`;
   };
 
   return (
@@ -54,62 +48,70 @@ const Experience = () => {
       <div className="experience-layout">
         <div className="experience-intro">
           <motion.h2
-  variants={fadeLeft}
-  initial="hidden"
-  whileInView="show"
-  viewport={{ once: true }}
->
+            variants={fadeLeft}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true }}
+          >
             Where I've
             <br />
             <span>built & learned.</span>
           </motion.h2>
 
           <motion.p
-  variants={fadeRight}
-  initial="hidden"
-  whileInView="show"
-  viewport={{ once: true }}
->
-            Experience across backend development, web engineering, product
-            design, and technical mentoring.
+            variants={fadeRight}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true }}
+          >
+            Engineering track record across enterprise fullstack mobility systems, backend micro-services, university laboratory platforms, and technical mentorship.
           </motion.p>
         </div>
 
         <div className="experience-list">
-          {loading && (
-            <p className="experience-status">Loading experiences...</p>
-          )}
+          {experiences.map((experience, index) => {
+            const isCurrent =
+              experience.end_date?.toUpperCase() === "PRESENT" ||
+              experience.start_date?.includes("OCT 2026");
 
-          {error && (
-            <p className="experience-status">Unable to load experiences.</p>
-          )}
-
-          {!loading &&
-            !error &&
-            experiences.map((experience, index) => (
+            return (
               <motion.article
-  className="experience-item"
-  key={experience.id}
-  variants={fadeUp}
-  initial="hidden"
-  whileInView="show"
-  viewport={{ once: true }}
-  transition={{
-    delay: index * 0.15,
-  }}
-  whileHover={{
-    x: 10,
-    transition: {
-      duration: 0.25,
-    },
-  }}
->
+                className={`experience-item ${
+                  isCurrent ? "experience-item-current" : ""
+                }`}
+                key={experience.id || index}
+                variants={fadeUp}
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true }}
+                transition={{
+                  delay: index * 0.1,
+                }}
+                whileHover={{
+                  x: 8,
+                  transition: {
+                    duration: 0.2,
+                  },
+                }}
+              >
                 <div className="experience-period">
-                  {formatPeriod(experience)}
+                  <span className="experience-date">
+                    {formatPeriod(experience)}
+                  </span>
+                  {isCurrent && (
+                    <div className="current-badge-wrapper">
+                      <span className="current-badge">
+                        <span className="current-dot" />
+                        CURRENT
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="experience-content">
-                  <h3>{experience.position}</h3>
+                  <div className="experience-title-row">
+                    <h3>{experience.position}</h3>
+                  </div>
 
                   <p className="experience-company">{experience.company}</p>
 
@@ -124,7 +126,8 @@ const Experience = () => {
                   </div>
                 </div>
               </motion.article>
-            ))}
+            );
+          })}
         </div>
       </div>
     </section>

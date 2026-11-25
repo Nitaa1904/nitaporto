@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { fadeUp, fadeLeft, fadeRight } from "../animations/fade";
+import { DEVELOPER_PROFILE } from "../data/portfolioData";
 
 const Hero = () => {
   return (
@@ -22,7 +23,7 @@ const Hero = () => {
           animate="show"
           transition={{ delay: 0.1 }}
         >
-          SOFTWARE ENGINEER · BACKEND FOCUSED
+          SOFTWARE ENGINEER • BACKEND & FULLSTACK FOCUSED
         </motion.p>
 
         <motion.h1
@@ -37,12 +38,13 @@ const Hero = () => {
         </motion.h1>
 
         <motion.p
+          className="hero-description"
           variants={fadeLeft}
           initial="hidden"
           animate="show"
           transition={{ delay: 0.35 }}
         >
-          I design scalable backend systems, build secure REST APIs, and translate complex business workflows into reliable software used by real users.
+          Software Engineering graduate from Telkom University Purwokerto (GPA 3.92/4.00) specializing in robust backend architecture, RESTful API design, and high-performance fullstack web engineering.
         </motion.p>
 
         <motion.div
@@ -60,6 +62,16 @@ const Hero = () => {
           <a href="#contact" className="btn-secondary">
             Get in touch
           </a>
+
+          <a
+            href={DEVELOPER_PROFILE.contact.resumeUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-secondary hero-cv-btn"
+          >
+            Download CV
+            <span>↗</span>
+          </a>
         </motion.div>
 
         <motion.div
@@ -70,9 +82,15 @@ const Hero = () => {
           transition={{ delay: 0.65 }}
         >
           <span>RUST</span>
+          <span className="hero-stack-dot">•</span>
           <span>GOLANG</span>
+          <span className="hero-stack-dot">•</span>
+          <span>TYPESCRIPT</span>
+          <span className="hero-stack-dot">•</span>
+          <span>NODE.JS</span>
+          <span className="hero-stack-dot">•</span>
           <span>POSTGRESQL</span>
-          <span>REST API</span>
+          <span className="hero-stack-dot">•</span>
           <span>DOCKER</span>
         </motion.div>
       </div>
@@ -107,7 +125,12 @@ const Hero = () => {
 
             <p className="code-indent">
               <span className="code-property">"role"</span>:{" "}
-              <span className="code-value">"Software Engineer"</span>,
+              <span className="code-value">"Software Engineer (Backend & Fullstack)"</span>,
+            </p>
+
+            <p className="code-indent">
+              <span className="code-property">"current_role"</span>:{" "}
+              <span className="code-value">"Fullstack Developer Intern @ PT MODA"</span>,
             </p>
 
             <p className="code-indent">
@@ -115,7 +138,11 @@ const Hero = () => {
             </p>
 
             <p className="code-double-indent">
-              <span className="code-value">"Backend"</span>,
+              <span className="code-value">"Backend Architecture"</span>,
+            </p>
+
+            <p className="code-double-indent">
+              <span className="code-value">"Fullstack Web"</span>,
             </p>
 
             <p className="code-double-indent">

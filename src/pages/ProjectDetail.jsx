@@ -1,34 +1,43 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { DEFAULT_PROJECTS } from "../data/portfolioData";
 
 const ProjectDetail = () => {
   const { slug } = useParams();
 
-  const [project, setProject] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const fallbackProject = DEFAULT_PROJECTS.find((p) => p.slug === slug) || null;
+  const [project, setProject] = useState(fallbackProject);
+  const [loading, setLoading] = useState(!fallbackProject);
   const [error, setError] = useState(false);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+
     const fetchProject = async () => {
       try {
         const response = await fetch(`/api/projects/${slug}`);
 
         if (!response.ok) {
-          throw new Error("Project not found");
+          if (!fallbackProject) {
+            throw new Error("Project not found");
+          }
+          return;
         }
 
         const data = await response.json();
         setProject(data);
       } catch (err) {
-        console.error("Failed to fetch project:", err);
-        setError(true);
+        if (!fallbackProject) {
+          console.error("Failed to fetch project:", err);
+          setError(true);
+        }
       } finally {
         setLoading(false);
       }
     };
 
     fetchProject();
-  }, [slug]);
+  }, [slug, fallbackProject]);
 
   if (loading) {
     return (
@@ -54,12 +63,15 @@ const ProjectDetail = () => {
     );
   }
 
+  const isNda =
+    project.is_nda || project.slug === "enterprise-mobility-rpo-modules";
+
   return (
     <main className="case-study-page">
       <div className="case-study-container">
         <nav className="case-nav">
           <Link to="/" className="case-logo">
-            nita.
+            nita<span>.</span>
           </Link>
 
           <Link to="/#projects" className="case-back">
@@ -67,10 +79,20 @@ const ProjectDetail = () => {
           </Link>
         </nav>
 
+        {isNda && (
+          <div className="nda-banner">
+            <span className="nda-dot" />
+            <strong>STRICTLY NDA-SAFE SPECIFICATION</strong>
+            <span>
+              Proprietary client interfaces, trade secrets, and internal databases are omitted. Only general engineering architectures and refactoring methodologies are detailed.
+            </span>
+          </div>
+        )}
+
         <header className="case-hero">
           <div className="section-label">
             <span>CASE STUDY</span>
-            BACKEND ENGINEERING
+            {isNda ? "ENTERPRISE ENGINEERING" : "BACKEND ENGINEERING"}
           </div>
 
           <div className="case-hero-grid">
@@ -90,12 +112,20 @@ const ProjectDetail = () => {
 
               <div className="case-meta-item">
                 <span>FOCUS</span>
-                <p>Backend Architecture & API Development</p>
+                <p>
+                  {isNda
+                    ? "Fullstack Refactoring & API Security"
+                    : "Backend Architecture & API Development"}
+                </p>
               </div>
 
               <div className="case-meta-item">
                 <span>PROJECT TYPE</span>
-                <p>Software Engineering Project</p>
+                <p>
+                  {isNda
+                    ? "Enterprise Logistics & Mobility System"
+                    : "Software Engineering Project"}
+                </p>
               </div>
             </div>
           </div>
@@ -169,7 +199,7 @@ const ProjectDetail = () => {
           </section>
         )}
 
-        {project.problem && (
+        {project.solution && (
           <section className="case-study-section">
             <div className="case-study-number">04</div>
 
@@ -189,55 +219,7 @@ const ProjectDetail = () => {
           </section>
         )}
 
-        {project.key_features?.length > 0 && (
-          <section className="case-study-section">
-            <div className="case-study-number">05</div>
-
-            <div className="case-study-heading">
-              <p className="case-study-label">MAIN FEATURES</p>
-
-              <h2>
-                Designed around the
-                <br />
-                <span>user journey.</span>
-              </h2>
-            </div>
-
-            <div className="case-study-content">
-              <div className="case-highlights">
-                {project.key_features.map((feature, index) => (
-                  <div className="case-highlight-item" key={feature}>
-                    <span>{String(index + 1).padStart(2, "0")}</span>
-
-                    <p>{feature}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
-
-        {project.project_context && (
-          <section className="case-study-section">
-            <div className="case-study-number">06</div>
-
-            <div className="case-study-heading">
-              <p className="case-study-label">PROJECT CONTEXT</p>
-
-              <h2>
-                From development
-                <br />
-                to <span>exhibition.</span>
-              </h2>
-            </div>
-
-            <div className="case-study-content">
-              <p>{project.project_context}</p>
-            </div>
-          </section>
-        )}
-
-        {project.problem && (
+        {project.architecture && (
           <section className="case-study-section architecture-section">
             <div className="case-study-number">05</div>
 
@@ -253,6 +235,40 @@ const ProjectDetail = () => {
 
             <div className="case-study-content">
               <p>{project.architecture}</p>
+
+              {project.slug === "enterprise-mobility-rpo-modules" && (
+                <div className="architecture-flow">
+                  <div className="architecture-item">
+                    <span>01</span>
+                    <strong>Next.js Client</strong>
+                    <small>RTK Query Service</small>
+                  </div>
+
+                  <div className="architecture-arrow">→</div>
+
+                  <div className="architecture-item">
+                    <span>02</span>
+                    <strong>POST Body</strong>
+                    <small>Secured Query Payload</small>
+                  </div>
+
+                  <div className="architecture-arrow">→</div>
+
+                  <div className="architecture-item">
+                    <span>03</span>
+                    <strong>Koa Server</strong>
+                    <small>Schema Validation</small>
+                  </div>
+
+                  <div className="architecture-arrow">→</div>
+
+                  <div className="architecture-item">
+                    <span>04</span>
+                    <strong>PostgreSQL</strong>
+                    <small>Objection.js ORM</small>
+                  </div>
+                </div>
+              )}
 
               {project.slug === "sicantik-bangsa-v2" && (
                 <div className="architecture-flow">
@@ -325,131 +341,27 @@ const ProjectDetail = () => {
           </section>
         )}
 
-        {project.problem && (
+        {project.security && (
           <section className="case-study-section security-section">
             <div className="case-study-number">06</div>
 
             <div className="case-study-heading">
-              <p className="case-study-label">SECURITY & AUTHORIZATION</p>
+              <p className="case-study-label">SECURITY & VALIDATION</p>
 
               <h2>
-                Access controlled
+                Protected and verified
                 <br />
-                <span>at every layer.</span>
+                <span>at every boundary.</span>
               </h2>
             </div>
 
             <div className="case-study-content">
               <p>{project.security}</p>
-
-              {project.slug === "sicantik-bangsa-v2" && (
-                <div className="security-flow">
-                  <div className="security-step">
-                    <span>01</span>
-                    <div>
-                      <strong>Authentication</strong>
-                      <small>User login & credential verification</small>
-                    </div>
-                  </div>
-
-                  <div className="security-line" />
-
-                  <div className="security-step">
-                    <span>02</span>
-                    <div>
-                      <strong>JWT Validation</strong>
-                      <small>Access token verification</small>
-                    </div>
-                  </div>
-
-                  <div className="security-line" />
-
-                  <div className="security-step">
-                    <span>03</span>
-                    <div>
-                      <strong>Session Check</strong>
-                      <small>Active session validation with Redis</small>
-                    </div>
-                  </div>
-
-                  <div className="security-line" />
-
-                  <div className="security-step">
-                    <span>04</span>
-                    <div>
-                      <strong>RBAC</strong>
-                      <small>Role & permission authorization</small>
-                    </div>
-                  </div>
-
-                  <div className="security-line" />
-
-                  <div className="security-step">
-                    <span>05</span>
-                    <div>
-                      <strong>Institution Scope</strong>
-                      <small>Multi-institution data access control</small>
-                    </div>
-                  </div>
-
-                  <div className="security-line" />
-
-                  <div className="security-step">
-                    <span>06</span>
-                    <div>
-                      <strong>Protected Resource</strong>
-                      <small>Authorized API response</small>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {project.slug === "village-cooperative-system" && (
-                <div className="security-flow">
-                  <div className="security-step">
-                    <span>01</span>
-                    <div>
-                      <strong>Login</strong>
-                      <small>User credential verification</small>
-                    </div>
-                  </div>
-
-                  <div className="security-line" />
-
-                  <div className="security-step">
-                    <span>02</span>
-                    <div>
-                      <strong>JWT Authentication</strong>
-                      <small>Token validation for protected requests</small>
-                    </div>
-                  </div>
-
-                  <div className="security-line" />
-
-                  <div className="security-step">
-                    <span>03</span>
-                    <div>
-                      <strong>Role Middleware</strong>
-                      <small>Role-based endpoint access validation</small>
-                    </div>
-                  </div>
-
-                  <div className="security-line" />
-
-                  <div className="security-step">
-                    <span>04</span>
-                    <div>
-                      <strong>Protected Operation</strong>
-                      <small>Authorized cooperative transaction workflow</small>
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
           </section>
         )}
 
-        {project.testing_result && (
+        {project.slug === "sicantik-bangsa-v2" && (
           <section className="testing-section">
             <div className="testing-top">
               <div className="case-study-number">07</div>
@@ -514,8 +426,8 @@ const ProjectDetail = () => {
 
         <footer className="case-footer">
           <div>
-            <p>NEXT PROJECT</p>
-            <h2>Explore more systems.</h2>
+            <p>NEXT EXPLORATION</p>
+            <h2>Explore more engineered systems.</h2>
           </div>
 
           <Link to="/#projects" className="case-next">
